@@ -40,6 +40,20 @@ const itemSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  sold: [
+    {
+      to: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+      },
+      status: {
+        //status false means unsold else sold
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
 });
 
 const Item = mongoose.model('Item', itemSchema);

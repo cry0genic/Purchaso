@@ -91,6 +91,21 @@ router.post('/bid/:id', auth, async (req, res) => {
   }
 });
 
-//mark as sold by Owner
+router.post('/sold/:id/:user_id', auth, async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  const bids = items.bids;
+  const user = item.bids.find((user) => user.id === req.params.user_id);
+  try {
+    if (item.sold === true) {
+      return res.status(400).send('item is alreay sold');
+    }
+    if (!user) {
+      return res.status(404).send('user not found');
+    }
+    //
+  } catch (e) {
+    res.status(500).send('server error');
+  }
+});
 
 module.exports = router;
