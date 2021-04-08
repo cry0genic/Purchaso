@@ -26,6 +26,7 @@ router.get('/items', auth, async (req, res) => {
   try {
     const items = await Item.find().sort({ date: -1 });
     res.status(200).send(item);
+    //do not show items already sold
   } catch (e) {
     console.error(e.message);
     res.status(500).send('Server Error');
@@ -46,5 +47,7 @@ router.get('/item/:id', auth, async (req, res) => {
 });
 
 //edit task by ITEM OWNER
+
+//bid on ITEM
 
 module.exports = router;
