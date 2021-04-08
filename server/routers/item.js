@@ -6,7 +6,6 @@ const User = require('../models/user');
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
 const { update } = require('../models/user');
-const Item = require('../models/item');
 
 //Post an item up for sale
 router.post('/item', auth, async (req, res) => {

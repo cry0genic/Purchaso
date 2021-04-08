@@ -56,8 +56,8 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual('items', {
   ref: 'Item',
-  localfield: '_id',
-  foreignfied: 'seller',
+  localField: '_id',
+  foreignField: 'seller',
 });
 
 userSchema.methods.toJSON = function () {
