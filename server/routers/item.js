@@ -26,11 +26,12 @@ router.post('/item', auth, async (req, res) => {
 router.get('/items', auth, async (req, res) => {
   try {
     const items = await Item.find({
-      sold: {
-        status: false,
-      }.sort({ date: -1 }),
+      //fix this
+      // sold: {
+      //   status: false, ///find by status when not sold FFF
+      // },
     });
-    res.status(200).send(item);
+    res.status(200).send(items);
   } catch (e) {
     console.error(e.message);
     res.status(500).send('Server Error');
@@ -53,10 +54,12 @@ router.get('/item/:id', auth, async (req, res) => {
 //Edit item by Seller
 router.patch('/item/:id', auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'description', 'baseBid'];
-  const isValidOperation = updates.every((update) => {
-    allowedUpdates.includes(update);
-  });
+  const allowedUpdates = ['description', 'name', 'baseBid'];
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'inavlid updates' });
+  }
   try {
     const item = await Item.findById(req.params.id);
     if (!item) {
@@ -65,9 +68,7 @@ router.patch('/item/:id', auth, async (req, res) => {
     if (item.seller.toString() !== req.user.id) {
       return res.status(401).send('user not authorized');
     }
-    if (!isValidOperation) {
-      return res.status(400).send('invalid updates');
-    }
+
     updates.forEach((update) => {
       item[update] = req.body[update];
     });
@@ -88,6 +89,7 @@ router.post('/bid/:id', auth, async (req, res) => {
       user: req.user.id,
     };
     if (newBid.bid < currentBid) {
+      ///FFF this does not work
       return res.status(400).send('bid a higher value');
     }
     item.bids.unshift(newBid);

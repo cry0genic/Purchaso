@@ -44,7 +44,6 @@ const itemSchema = new mongoose.Schema({
     {
       to: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'User',
       },
       status: {
