@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Item = require('../models/item');
 
 const userSchema = new mongoose.Schema(
   {
@@ -53,7 +54,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-//virtualSchema
+userSchema.virtual('items', {
+  ref: 'Item',
+  localfield: '_id',
+  foreignfied: 'seller',
+});
 
 userSchema.methods.toJSON = function () {
   const user = this;
@@ -90,9 +95,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
-// hash the plain text password b4 saving
 userSchema.pre('save', async function (next) {
-  //this has to be a standard function due to binding
   const user = this;
 
   if (user.isModified('password')) {
@@ -102,7 +105,11 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-//remove items when user is deleted
+userSchema.pre('remove', async function (next) {
+  const user = this;
+  await Item.deleteMany({ seller: user._id });
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 

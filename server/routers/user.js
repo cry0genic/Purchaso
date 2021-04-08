@@ -112,7 +112,7 @@ router.post(
   }
 );
 
-router.delete('/user/me/avatar', auth, async (req, res) => {
+router.delete('/user/me/profilePic', auth, async (req, res) => {
   req.user.profilePic = undefined;
   await req.user.save();
   res.send();
