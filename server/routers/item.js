@@ -5,6 +5,8 @@ const sharp = require('sharp');
 const User = require('../models/user');
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
+const { update } = require('../models/user');
+const Item = require('../models/item');
 
 //post a item up for sale
 router.post('/item', auth, async (req, res) => {
@@ -46,8 +48,49 @@ router.get('/item/:id', auth, async (req, res) => {
   }
 });
 
-//edit task by ITEM OWNER
+router.patch('/item/:id', auth, async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'description', 'baseBid'];
+  const isValidOperation = updates.every((update) => {
+    allowedUpdates.includes(update);
+  });
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) {
+      return res.status(404).send('item not found');
+    }
+    if (item.seller.toString() !== req.user.id) {
+      return res.status(401).send('user not authorized');
+    }
+    if (!isValidOperation) {
+      return res.status(400).send('invalid updates');
+    }
+    updates.forEach((update) => {
+      item[update] = req.body[update];
+    });
+    await item.save();
+    res.send(item);
+  } catch (e) {
+    res.status(500).send('server error');
+  }
+});
 
-//bid on ITEM
+router.post('/bid/:id', auth, async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    const newBid = {
+      bid: req.body.bid,
+      user: req.user.id,
+    };
+    item.bids.unshift(newBid);
+    await item.save();
+    res.send(item.bids);
+  } catch (e) {
+    console.error(e.message);
+    res.status(500).send('server error');
+  }
+});
+
+//mark as sold by Owner
 
 module.exports = router;
