@@ -5,6 +5,8 @@ const sharp = require('sharp');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 
+// API https://{url}/register
+// Desc Register a new User
 router.post('/register', async (req, res) => {
   const user = new User(req.body);
 
@@ -17,6 +19,8 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// API https://{url}/login
+// Desc Login user with credentials
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
@@ -27,6 +31,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// API https://{url}/user/logout
+// Desc Logout a User
 router.post('/user/logout', auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
@@ -40,6 +46,8 @@ router.post('/user/logout', auth, async (req, res) => {
   }
 });
 
+// API https://{url}/user/logoutALL
+// Desc Logout user of all sessions
 router.post('/user/logoutALL', auth, async (req, res) => {
   try {
     req.user.tokens = [];
@@ -50,10 +58,14 @@ router.post('/user/logoutALL', auth, async (req, res) => {
   }
 });
 
+// API https://{url}/user/me
+// Desc Self User profile
 router.get('/user/me', auth, async (req, res) => {
   res.send(req.user);
 });
 
+// API https://{url}/user/me
+// Desc Update Self User profile
 router.patch('/user/me', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password'];
@@ -74,6 +86,8 @@ router.patch('/user/me', auth, async (req, res) => {
   }
 });
 
+// API https://{url}/user/me
+// Desc Remove User
 router.delete('/user/me', auth, async (req, res) => {
   try {
     await req.user.remove();
@@ -95,6 +109,8 @@ const upload = multer({
   },
 });
 
+// API https://{url}/user/me/profilePic
+// Desc Add Profile Pic to Self User profile
 router.post(
   '/user/me/profilePic',
   auth,
@@ -112,6 +128,8 @@ router.post(
   }
 );
 
+// API https://{url}/user/me/profilePic
+// Desc Delete Profile Pic to Self User profile
 router.delete('/user/me/profilePic', auth, async (req, res) => {
   req.user.profilePic = undefined;
   await req.user.save();

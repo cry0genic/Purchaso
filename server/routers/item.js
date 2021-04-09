@@ -6,7 +6,8 @@ const User = require('../models/user');
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
 
-//Post an item up for sale
+// API https://{url}/item
+// Desc Post an item up for sale
 router.post('/item', auth, async (req, res) => {
   const item = new Item({
     ...req.body,
@@ -21,7 +22,8 @@ router.post('/item', auth, async (req, res) => {
   }
 });
 
-//See all items up for sale
+// API https://{url}/items
+// Desc See all items up for sale
 router.get('/items', auth, async (req, res) => {
   try {
     const items = await Item.find({ notAvailable: false });
@@ -32,7 +34,8 @@ router.get('/items', auth, async (req, res) => {
   }
 });
 
-//Particular details of an item
+// API https://{url}/item/:id
+// Desc View details of a particular item
 router.get('/item/:id', auth, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
@@ -45,7 +48,8 @@ router.get('/item/:id', auth, async (req, res) => {
   }
 });
 
-//Edit item by Seller
+// API https://{url}/item/:id
+// Desc Edit item by Seller
 router.patch('/item/:id', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['description', 'name', 'baseBid'];
@@ -73,7 +77,8 @@ router.patch('/item/:id', auth, async (req, res) => {
   }
 });
 
-//Bid on an Item
+// API https://{url}/bid/:id
+// Desc Bid on a particular item
 router.post('/bid/:id', auth, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
@@ -100,7 +105,8 @@ router.post('/bid/:id', auth, async (req, res) => {
   }
 });
 
-//Mark the item sold
+// API https://{url}/sell/:item_id/:buyer_id
+// Desc Mark an item sold by Seller
 router.post('/sell/:item_id/:buyer_id', auth, async (req, res) => {
   const item = await Item.findById(req.params.item_id);
   const buyer = await User.findById(req.params.buyer_id);
@@ -133,6 +139,8 @@ const upload = multer({
   },
 });
 
+// API https://{url}/item/:id/image
+// Desc Upload image to an item
 router.post('/item/:id/image', auth, upload.single('image'), async (req, res) => {
   const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
   const item = await Item.findById(req.params.id);
