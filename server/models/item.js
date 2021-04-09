@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const itemSchema = new mongoose.Schema({
   name: {
@@ -40,19 +37,15 @@ const itemSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  sold: [
-    {
-      to: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-      status: {
-        //status false means unsold else sold
-        type: Boolean,
-        default: false,
-      },
-    },
-  ],
+  sold: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  notAvailable: {
+    //notAvailable = false = unsold
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Item = mongoose.model('Item', itemSchema);

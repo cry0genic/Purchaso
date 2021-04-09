@@ -5,7 +5,6 @@ const sharp = require('sharp');
 const User = require('../models/user');
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
-const { update } = require('../models/user');
 
 //Post an item up for sale
 router.post('/item', auth, async (req, res) => {
@@ -25,12 +24,7 @@ router.post('/item', auth, async (req, res) => {
 //See all items up for sale
 router.get('/items', auth, async (req, res) => {
   try {
-    const items = await Item.find({
-      //fix this
-      // sold: {
-      //   status: false, ///find by status when not sold FFF
-      // },
-    });
+    const items = await Item.find({ notAvailable: false });
     res.status(200).send(items);
   } catch (e) {
     console.error(e.message);
@@ -83,13 +77,14 @@ router.patch('/item/:id', auth, async (req, res) => {
 router.post('/bid/:id', auth, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
-    const currentBid = item.bids.bid;
+    // const maxBid = Array.reduce(item.bids.bid);
     const newBid = {
       bid: req.body.bid,
       user: req.user.id,
     };
-    if (newBid.bid < currentBid) {
-      ///FFF this does not work
+    console.log(maxBid);
+    //cuurentBid is undefined, we have to take the max value from it
+    if (newBid.bid < maxBid) {
       return res.status(400).send('bid a higher value');
     }
     item.bids.unshift(newBid);
@@ -111,11 +106,8 @@ router.post('/sell/:item_id/:buyer_id', auth, async (req, res) => {
     if (items.sold.length > 0) {
       return res.status(400).send('item is already sold');
     }
-    const newSold = {
-      to: buyer.id,
-      status: true,
-    };
-    items.sold.unshift(newSold);
+    item.sold = buyer.id;
+    item.notAvailable = true;
     await item.save();
     res.send(item);
   } catch (e) {
