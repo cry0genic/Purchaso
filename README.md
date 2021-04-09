@@ -4,17 +4,17 @@ You will be building an exclusive marketplace app for BITSians. Students can use
 
 # Mandatory Features
 
-1. User authentication. Users must be able to register/login to your app. Do this using username/password or OAuth.
+- [x] 1. User authentication. Users must be able to register/login to your app. Do this using username/password or OAuth.
 
-2. Each user must have a profile in which they can add/update data. This data can be: Name, Bio, Profile Pic, etc.
+- [x] 2. Each user must have a profile in which they can add/update data. This data can be: Name, Bio, Profile Pic, etc.
 
-3. Users should be able to add items for sale. Items must have a photo, a description, and a base price.
+- [x] 3. Users should be able to add items for sale. Items must have a photo, a description, and a base price.
 
-4. Users should be able to place bids on items. Bids must have a price which is greater than the base price.
+- [x] 4. Users should be able to place bids on items. Bids must have a price which is greater than the base price.
 
-5. Let the user see a feed on the homepage. This feed should include items that are up for sale. Note that this should exclude items that have already been sold.
+- [x] 5. Let the user see a feed on the homepage. This feed should include items that are up for sale. Note that this should exclude items that have already been sold.
 
-6. Implement a logic for items to be marked as sold once the seller selects a bid.
+- [x] 6. Implement a logic for items to be marked as sold once the seller selects a bid.
 
 # Bonus Features
 

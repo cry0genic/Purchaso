@@ -113,6 +113,7 @@ router.post('/sell/:item_id/:buyer_id', auth, async (req, res) => {
 
   try {
     if (item.seller.id !== req.user.id) {
+      //item.seller.toString() !== req.user.id
       return res.status(401).send('not authorized');
     }
     if (item.notAvailable === true) {
