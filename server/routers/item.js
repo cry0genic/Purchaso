@@ -77,14 +77,18 @@ router.patch('/item/:id', auth, async (req, res) => {
 router.post('/bid/:id', auth, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
-    // const maxBid = Array.reduce(item.bids.bid);
+    const bidArray = item.bids;
+    const descBid = bidArray.sort((a, b) => {
+      parseFloat(b.bid) - parseFloat(a.bid);
+    });
+    const maxBid = descBid[0];
+
     const newBid = {
       bid: req.body.bid,
       user: req.user.id,
     };
-    console.log(maxBid);
-    //cuurentBid is undefined, we have to take the max value from it
-    if (newBid.bid < maxBid) {
+
+    if (newBid.bid < maxBid.bid) {
       return res.status(400).send('bid a higher value');
     }
     item.bids.unshift(newBid);
@@ -98,12 +102,14 @@ router.post('/bid/:id', auth, async (req, res) => {
 
 //Mark the item sold
 router.post('/sell/:item_id/:buyer_id', auth, async (req, res) => {
-  const seller = await User.findById(req.params.id);
   const item = await Item.findById(req.params.item_id);
   const buyer = await User.findById(req.params.buyer_id);
 
   try {
-    if (items.sold.length > 0) {
+    if (item.seller.id !== req.user.id) {
+      return res.status(401).send('not authorized');
+    }
+    if (item.notAvailable === true) {
       return res.status(400).send('item is already sold');
     }
     item.sold = buyer.id;
