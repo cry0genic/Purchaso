@@ -94,7 +94,7 @@ router.post('/bid/:id', auth, async (req, res) => {
     };
 
     if (newBid.bid < maxBid.bid) {
-      return res.status(400).send('bid a higher value');
+      return res.status(400).send('bid a higher value than' + maxBid.bid);
     }
     item.bids.unshift(newBid);
     await item.save();
